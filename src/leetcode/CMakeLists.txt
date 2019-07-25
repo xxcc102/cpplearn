@@ -1,0 +1,29 @@
+#leetcode 的配置
+
+#基础cpp文件
+SET( LEETCODE_TEST_CPP 
+	${PROJECT_SOURCE_DIR}/src/leetcode 
+	)
+
+#头文件设置
+SET( LEETCODE_TEST_H ${PROJECT_SOURCE_DIR}/include	)
+
+#公共库文件
+SET(COMMON_CPP ${PROJECT_SOURCE_DIR}/src/common)
+
+FILE(GLOB_RECURSE LEETCODE_FILE LIST_DIRECTORIES false ${LEETCODE_TEST_CPP}/*.cpp ${LEETCODE_TEST_CPP}/*.h ${LEETCODE_TEST_H}/*.h)
+MESSAGE(STATUS "LEETCODE_FILE:")
+FOREACH(file IN LISTS LEETCODE_FILE)
+	MESSAGE(STATUS ${file})
+ENDFOREACH(file)
+
+FILE(GLOB_RECURSE COMMON_FILE LIST_DIRECTORIES false ${COMMON_CPP}/*.cpp)
+MESSAGE(STATUS "COMMON_FILE:")
+FOREACH(file IN LISTS COMMON_FILE)
+	MESSAGE(STATUS ${file})
+ENDFOREACH(file)
+
+include_directories(${LEETCODE_TEST_H})
+
+add_executable(leetcode_program ${LEETCODE_FILE} ${COMMON_FILE})
+target_link_libraries(leetcode_program	gtest_main gtest)

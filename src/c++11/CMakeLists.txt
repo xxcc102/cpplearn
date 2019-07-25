@@ -1,0 +1,29 @@
+#c++11 的配置
+
+#基础cpp文件
+SET( CPP11_TEST_CPP 
+	${PROJECT_SOURCE_DIR}/src/c++11 
+	)
+
+#头文件设置
+SET( CPP11_TEST_H ${PROJECT_SOURCE_DIR}/include	)
+
+#公共库文件
+SET(COMMON_CPP ${PROJECT_SOURCE_DIR}/src/common)
+
+FILE(GLOB_RECURSE CPP11_FILE LIST_DIRECTORIES false ${CPP11_TEST_CPP}/*.cpp ${CPP11_TEST_CPP}/*.h ${CPP11_TEST_H}/*.h)
+MESSAGE(STATUS "CPP11_FILE:")
+FOREACH(file IN LISTS CPP11_FILE)
+	MESSAGE(STATUS ${file})
+ENDFOREACH(file)
+
+FILE(GLOB_RECURSE COMMON_FILE LIST_DIRECTORIES false ${COMMON_CPP}/*.cpp)
+MESSAGE(STATUS "COMMON_FILE:")
+FOREACH(file IN LISTS COMMON_FILE)
+	MESSAGE(STATUS ${file})
+ENDFOREACH(file)
+
+include_directories(${CPP11_TEST_H})
+
+add_executable(cpp11_program ${CPP11_FILE} ${COMMON_FILE})
+target_link_libraries(cpp11_program	gtest_main gtest)

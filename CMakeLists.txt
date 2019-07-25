@@ -10,6 +10,7 @@ set(CMAKE_BUILD_TYPE Debug)
 
 
 if (WIN32 AND NOT MINGW)
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
     set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/win)
     set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/win)   		
 elseif (UNIX AND NOT ANDROID)
@@ -23,4 +24,4 @@ elseif (UNIX AND NOT ANDROID)
 endif()
 
 add_subdirectory(src)
-#add_subdirectory(inlcude)
+#add_subdirectory(include)

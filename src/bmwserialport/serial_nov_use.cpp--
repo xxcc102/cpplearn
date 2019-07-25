@@ -1,0 +1,448 @@
+#include "serial.h"
+#include <string.h>
+#define CRC32_POLYNOMIAL 0xEDB88320L
+
+void swap(unsigned char &base, unsigned char &ref)
+{
+	if (base != ref)
+	{
+		base ^= ref;
+		ref ^= base;
+		base ^= ref;
+	}
+}
+
+unsigned long CRC32Value(int i)
+{
+	unsigned long ulCRC = i;
+	for (int j = 8; j > 0; j--)
+	{
+		if (ulCRC & 1)
+		{
+			ulCRC = (ulCRC >> 1) ^ CRC32_POLYNOMIAL;
+		}
+		else
+		{
+			ulCRC >>= 1;
+		}
+	}
+	return ulCRC;
+}
+
+
+unsigned long CalculateBlockCRC32(	unsigned long ulCount, /* Number of bytes in the data block */
+	unsigned char *ucBuffer) /* Data block */
+{
+	unsigned long ulTemp1;
+	unsigned long ulTemp2;
+	unsigned long ulCRC = 0;
+
+	while (ulCount-- != 0)
+	{
+		ulTemp1 = (ulCRC >> 8) & 0x00FFFFFFL;
+		ulTemp2 = CRC32Value(((int)ulCRC ^ *ucBuffer++) & 0xff);
+		ulCRC = ulTemp1 ^ ulTemp2;
+	}
+	return(ulCRC);
+}
+
+
+int ConstructLogHeader(unsigned char *header, const novatel& msg)
+{
+	int len = 0;
+	//同步位
+
+	setbits(header, len, 8, -86); len += 8;
+	setbits(header, len, 8, 68); len += 8;
+	setbits(header, len, 8, 18); len += 8;
+	//头长度
+	setbits(header, len, 8, 28); len += 8;
+	//MsgId
+	setbitshort(header, len, msg.msg_id); len += 16;
+	//reserved1
+	setbitu(header, len, 8, 0); len += 8;
+	//port
+	setbitu(header, len, 8, 64); len += 8;
+	//msglen
+	setbitshort(header, len, msg.msg_len); len += 16;
+	//reserved2
+	setbitshort(header, len, 0); len += 16;
+	//reserved3
+	setbitu(header, len, 8, 0); len += 8;
+	//reserved4
+	setbitu(header, len, 8, 0); len += 8;
+	//gpsweek
+	setbitshort(header, len, msg.gpsWeek); len += 16;
+	//gpssow
+	setbitint(header, len, msg.gpsSow); len += 32;
+	//reserved5
+	setbitint(header, len, 0); len += 32;
+	//reserved6
+	setbitshort(header, len, 0); len += 16;
+	//reserved7
+	setbitshort(header, len, 0); len += 16;
+
+	return len;
+}
+
+
+int ConstructDop(unsigned char *buffer, const novatel& msg)
+{
+	int sat_num;
+	unsigned long CRC32;
+	int len = ConstructLogHeader(buffer, msg);
+
+	setbitf(buffer, len, msg.gdop); len += 32;
+
+	setbitf(buffer, len, 0); len += 32;
+
+	setbitf(buffer, len, msg.hdop); len += 32;
+
+	setbitf(buffer, len, 0); len += 32;
+
+	setbitf(buffer, len, 0); len += 32;
+
+	setbitf(buffer, len, 0); len += 32;
+
+	setbitu_r(buffer, len, 32, msg.satnum); len += 32;
+
+	for (sat_num = 0; sat_num < msg.satnum; sat_num++)
+	{
+		setbitu_r(buffer, len, 32, 0);
+		len += 32;
+	}
+
+	CRC32 = CalculateBlockCRC32(len/8, buffer);
+	setbitint(buffer, len, CRC32); len += 32;
+
+	return len/8;
+}
+
+int convertsys(const int orlsys)
+{
+	int sys = 0;
+	switch (orlsys)
+	{
+	case 0:sys = 0; break;
+	case 1:sys = 1; break;
+	case 5:sys = 3; break;
+	case 6:sys = 4; break;
+	default:sys = 7; break;
+	}
+	return sys;
+}
+
+int conversnrfre(const int sys,const int frenum)
+{
+	if (frenum == 0)
+	{
+		if (sys == 5)
+		{
+			return 2;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+	else if (frenum == 1)
+	{
+		if (sys == 0)
+		{
+			return 5;
+		}
+		else if (sys == 5)
+		{
+			return 12;
+		}
+		else
+		{
+			return 1;
+		}
+	}
+}
+
+int ConstructTraceBack(unsigned char *buf, const novatel& msg)
+{
+	unsigned long CRC32;
+	int chan_num, fre_num;
+	int len = ConstructLogHeader(buf, msg);
+
+	//solStatus
+	setbitint(buf, len, 0); len += 32;
+	//posType
+	setbitint(buf, len, 0); len += 32;
+	//cutoff
+	setbitf(buf, len, 0); len += 32;
+	//chanNum
+	setbitint(buf, len, msg.satnum * 2); len += 32;
+	//chan
+	for (chan_num = 0 ; chan_num < msg.satnum; chan_num++)
+	{
+		for (fre_num ; fre_num < 2 ; fre_num++)
+		{
+		}
+		//prn
+		setbitshort(buf, len, msg.sat[chan_num].prn); len += 16;
+		//glofreq
+		setbitshort(buf, len, 0); len += 16;
+		//chTrStatus
+		setbits(buf, len, 16, 0); len += 16;
+		setbits(buf, len, 3, convertsys(msg.sat[chan_num].sys)); len += 3;
+		setbits(buf, len, 2, 0); len += 2;
+		setbits(buf, len, 5, conversnrfre(msg.sat[chan_num].sys, fre_num)); len += 5;
+		setbits(buf, len, 6, 0); len += 6;
+		//psr
+		setbitdouble(buf, len, 0); len += 64;
+		//doppler
+		setbitf(buf, len, 0); len += 32;
+		//cno
+		setbitf(buf, len, msg.sat[chan_num].cno[fre_num]); len += 32;
+		//locktime
+		setbitf(buf, len, 0); len += 32;
+		//psrRes
+		setbitf(buf, len, 0); len += 32;
+		//reject
+		setbitint(buf, len, 0); len += 32;
+		//psrWeight
+		setbitf(buf, len, 0); len += 32;
+	}
+
+
+	CRC32 = CalculateBlockCRC32(len/8, buf);
+	setbitint(buf, len, CRC32); len += 32;
+
+	return len / 8;
+}
+
+int ConstructBestPos(unsigned char *buf, const novatel& msg)
+{
+	unsigned long CRC32;
+	int stnID_num;
+	int len = ConstructLogHeader(buf, msg);
+
+	//solStatus
+	setbitint(buf, len, 0); len += 32;
+	//posType
+	setbitint(buf, len, 0); len += 32;
+	//lat
+	setbitdouble(buf, len, msg.lat); len += 64;
+	//lon
+	setbitdouble(buf, len, msg.lon); len += 64;
+	//hgt
+	setbitdouble(buf, len, msg.hgt); len += 64;
+	//dulation
+	setbitf(buf, len,msg.dulation); len += 32;
+	//datumID
+	setbitint(buf, len, 0); len += 32;
+	//latSigma
+	setbitf(buf, len, 0); len += 32;
+	//lonSigma
+	setbitf(buf, len, 0); len += 32;
+	//hgtSigma
+	setbitf(buf, len, 0); len += 32;
+	//stnID
+	for (stnID_num = 0; stnID_num < 4 ; stnID_num++)
+	{
+		setbits(buf, len, 8, 0); len += 8;
+	}
+	//diffAge
+	setbitf(buf, len, 0); len += 32;
+	//solAge
+	setbitf(buf, len, 0); len += 32;
+	//nSVs
+	setbits(buf, len, 8, msg.nSVs); len += 8;
+	//nSolSvs
+	setbits(buf, len, 8, msg.nSolSvs); len += 8;
+	//nL1SVs
+	setbits(buf, len, 8, 0); len += 8;
+	//nL1L2Svs
+	setbits(buf, len, 8, 0); len += 8;
+	//reserved1
+	setbits(buf, len, 8, 0); len += 8;
+	//reserved2
+	setbits(buf, len, 8, 0); len += 8;
+	//reserved3
+	setbits(buf, len, 8, 0); len += 8;
+	//solSignal
+	setbits(buf, len, 8, 0); len += 8;
+	
+	CRC32 = CalculateBlockCRC32(len/8, buf);
+	setbitint(buf, len, CRC32); len += 32;
+
+	return len/8;
+}
+
+
+int ConstructBestSats(unsigned char *buf, const novatel& msg)
+{
+	unsigned long CRC32;
+	int best_num;
+	int len = ConstructLogHeader(buf, msg);
+	//entries
+	setbitint(buf, len, msg.satnum); len += 32;
+
+	for (best_num = 0; best_num < msg.satnum; best_num++)
+	{
+		//sys
+		setbitint(buf, len, msg.sat[best_num].sys); len += 32;
+		//sat_id_low
+		setbitshort(buf, len, msg.sat[best_num].prn); len += 16;
+		//sat_id_high
+		setbitshort(buf, len, 0); len += 16;
+		//status
+		setbitint(buf, len, msg.sat[best_num].status); len += 32;
+		//signal_mask
+		setbitint(buf, len, 0); len += 32;
+	}
+
+	CRC32 = CalculateBlockCRC32(len/8, buf);
+	setbitint(buf, len, CRC32); len += 32;
+
+	return len/8;
+}
+
+
+int ConstructSatVis2(unsigned char *buf, const novatel& msg)
+{
+	unsigned long CRC32;
+	int sat_num,len = ConstructLogHeader(buf, msg);
+
+	//sat_sys
+	setbitint(buf, len, 0); len += 32;
+	//sat_vis
+	setbitint(buf, len, 0); len += 32;
+	//comp_alm
+	setbitint(buf, len, 0); len += 32;
+	//sat_number
+	setbitint(buf, len, msg.satnum); len += 32;
+	//
+	for (sat_num = 0; sat_num < msg.satnum; sat_num++)
+	{
+		//sat_id_low
+		setbitshort(buf, len, msg.sat[sat_num].prn); len += 16;
+		//sat_id_high
+		setbitshort(buf, len, 0); len += 16;
+		//health
+		setbitint(buf, len, msg.sat[sat_num].status); len += 32;
+		//elev
+		setbitdouble(buf, len, msg.sat[sat_num].elev); len += 64;
+		//az
+		setbitdouble(buf, len, msg.sat[sat_num].az); len += 64;
+		//true_dop
+		setbitdouble(buf, len, 0); len += 64;
+		//app_dop
+		setbitdouble(buf, len, 0); len += 64;
+	}
+
+	CRC32 = CalculateBlockCRC32(len/8, buf);
+	setbitint(buf, len, CRC32); len += 32;
+
+	return len/8;
+}
+
+
+/* set sign-magnitude bits ---------------------------------------------------*/
+void setbitg(unsigned char *buff, int pos, int len, int value)
+{
+	setbitu(buff, pos, 1, value < 0 ? 1 : 0);
+	setbitu(buff, pos + 1, len - 1, value < 0 ? -value : value);
+}
+
+
+
+void setbitf(unsigned char *buff, int pos, const float num)
+{
+	Float2Bin num_float;
+	num_float.float_num = num;
+	memcpy(buff + pos / 8, num_float.char_num, 4);
+}
+
+
+void setbitint(unsigned char *buff, int pos, const int num)
+{
+	INT2Bin num_int;
+	num_int.int_num = num;
+	memcpy(buff + pos / 8, num_int.char_num, 4);
+}
+
+
+void setbitshort(unsigned char *buff, int pos, const short num)
+{
+	SHORT2Bin num_short;
+	num_short.int_num = num;
+	memcpy(buff + pos / 8, num_short.char_num, 2);
+}
+
+
+void setbitdouble(unsigned char *buff, int pos, const short num)
+{
+	Double2Bin num_double;
+	num_double.double_num = num;
+	memcpy(buff + pos / 8, num_double.char_num, 8);
+}
+
+
+/* set unsigned/signed bits ----------------------------------------------------
+* set unsigned/signed bits to byte data
+* args   : unsigned char *buff IO byte data
+*          int    pos    I      bit position from start of data (bits)
+*          int    len    I      bit length (bits) (len<=32)
+*         (unsigned) int I      unsigned/signed data
+* return : none
+*-----------------------------------------------------------------------------*/
+void setbitu(unsigned char *buff, int pos, int len, unsigned int data)
+{
+	unsigned int mask = 1u << (len - 1);
+	int i;
+	if (len <= 0 || 32 < len)
+		return;
+	for (i = pos; i < pos + len; i++, mask >>= 1)
+	{
+		if (data&mask)
+			buff[i / 8] |= 1u << (7 - i % 8);
+		else
+			buff[i / 8] &= ~(1u << (7 - i % 8));
+	}
+}
+
+void setbitu_r(unsigned char *buff, int pos, int len, unsigned int data)
+{
+	setbitu(buff, pos, len, data);
+	reversal(buff, pos + len, len);
+}
+
+void reversal(unsigned char *buff, int pos, int len)
+{
+	int i = 0;
+	int inputlen = len / 8;
+	int bufflen = pos / 8;
+	if (inputlen > 1)
+	{
+		for (i = 1; i <= inputlen / 2; i++)
+		{
+			swap(buff[bufflen - i], buff[bufflen - inputlen]);
+			inputlen--;
+		}
+	}
+}
+
+void setbits(unsigned char *buff, int pos, int len, int data)
+{
+	if (data < 0)
+		data |= 1 << (len - 1);
+	else
+		data &= ~(1 << (len - 1)); /* set sign bit */
+	setbitu(buff, pos, len, (unsigned int)data);
+}
+
+/**********************************************/
+
+int getbitu(const unsigned char *buff, int pos, int len)
+{
+	unsigned int bits = 0;
+	int i;
+	for (i = pos; i < pos + len; i++) bits = (bits << 1) + ((buff[i / 8] >> (7 - i % 8)) & 1u);
+	return bits;
+}
+
