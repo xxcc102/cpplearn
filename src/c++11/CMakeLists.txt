@@ -6,7 +6,9 @@ SET( CPP11_TEST_CPP
 	)
 
 #头文件设置
-SET( CPP11_TEST_H ${PROJECT_SOURCE_DIR}/include	)
+SET( CPP11_TEST_H 
+D:/boost_1_71_0
+${PROJECT_SOURCE_DIR}/include	)
 
 #公共库文件
 SET(COMMON_CPP ${PROJECT_SOURCE_DIR}/src/common)

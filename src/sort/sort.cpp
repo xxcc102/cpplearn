@@ -35,7 +35,7 @@ void Sort::swap(int &a, int &b)
 {
 	a ^= b;     //a=a^b
 	b ^= a;     //b=b^(a^b)=b^a^b=b^b^a=0^a=a
-	a ^= b;     //a=(a^b)^a=a^b^a=a^a^b=0^b=b}
+	a ^= b;     //a=(a^b)^a=a^b^a=a^a^b=0^b=b
 }
 
 void Sort::BubbleSort(vector<int> &list)
@@ -86,9 +86,9 @@ void Sort::InsertSort(std::vector<int> &list)
 	}
 }
 
+
 void Sort::HeapSort(std::vector<int> &list)
 {
-
 
 }
 

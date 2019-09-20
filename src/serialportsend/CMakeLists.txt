@@ -35,6 +35,6 @@ endforeach(file)
 
 include_directories(${COMMON_HEAD} ${SRC_DIR_NOV})
 
-add_executable(serialsend ${COMMON_HEAD_FILE} ${SRC_DIR_NOV_FILE} ${SRC_DIR_SEND_FILE})
+add_executable(processsend ${COMMON_HEAD_FILE} ${SRC_DIR_NOV_FILE} ${SRC_DIR_SEND_FILE})
 
-target_link_libraries(serialsend gtest_main gtest)
+target_link_libraries(processsend gtest_main gtest)

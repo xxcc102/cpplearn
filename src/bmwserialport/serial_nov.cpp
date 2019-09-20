@@ -350,6 +350,7 @@ int conversnrfre(const int sys, const int frenum)
 			return 1;
 		}
 	}
+	return 0;
 }
 
 unsigned long CRC32Value(int i)

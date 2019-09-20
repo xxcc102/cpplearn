@@ -1,6 +1,46 @@
 #pragma once
 #include "common.h"
 
+
+bool increment(char *number);
+
+
+class Base
+{
+	int baseone()
+	{
+		std::cout << "Base baseone" << std::endl;
+		return 0;
+	}
+};
+
+class Drieve :public Base
+{
+	int baseone()
+	{
+		std::cout << "Drieve baseone" << std::endl;
+		return 0;
+	}
+};
+
+
+class Fraction
+{
+public:
+	explicit Fraction(int num, int den = 1)
+		:m_numerator(num), m_denominator(den) {}
+	operator double()const{
+		return (double)m_numerator/m_denominator;
+	}
+	Fraction operator+(const Fraction &f) {
+		return Fraction(f);
+	}
+private:
+	int m_numerator;
+	int m_denominator;
+};
+
+
 struct ListNode
 {
 	int m_nKey;

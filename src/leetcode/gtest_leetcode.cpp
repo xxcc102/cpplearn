@@ -1,5 +1,312 @@
 #include "leetcode.h"
 #include "gtest/gtest.h"
+void Insert_Node(ListNode* node, vector<int> val)
+{
+
+	if (val.empty())
+	{
+		return;
+	}
+
+	ListNode *newnode = new ListNode(val.back());
+	val.pop_back();
+	node->next = newnode;
+	Insert_Node(node->next, val);
+	
+	//node = node->next;
+}
+TEST(Search, Normal)
+{
+	vector<int> in{ -1,0,3,5,9,12 };
+	vector<int> in1{ 3,24,50,79,88,150,345 };
+
+	BinarySearchSol *sol = new BinarySearchSol();
+	//ListNode *res = sol->deleteDuplicates(Node->next);
+	int res = sol->search(in, 3);
+}
+
+
+
+TEST(TwoSum, Normal)
+{
+	vector<int> in{ 2,3,4 };
+	vector<int> in1{ 3,24,50,79,88,150,345 };
+
+	BinarySearchSol *sol = new BinarySearchSol();
+	//ListNode *res = sol->deleteDuplicates(Node->next);
+	vector<int> res = sol->twoSum(in, 6);
+}
+
+TEST(Intersection, Normal)
+{
+	vector<int> in{ 4,9,5 };
+	vector<int> in1{ 9,4,9,8,4 };
+
+	HashTableSol *sol = new HashTableSol();
+	//ListNode *res = sol->deleteDuplicates(Node->next);
+	vector<int> res = sol->intersection(in1,in1);
+}
+
+
+TEST(IslandPerimeter, Normal)
+{
+	vector<vector<int>> in{ { 0,1,0,0 } ,{1,1,1,0} ,{0,1,0,0},{1,1,0,0} };
+
+	HashTableSol *sol = new HashTableSol();
+	//ListNode *res = sol->deleteDuplicates(Node->next);
+	int res = sol->islandPerimeter(in);
+}
+
+
+TEST(NextLargerNodes, 1)
+{
+	ListNode *Node = new ListNode(0);
+	ListNode *Node1 = new ListNode(0);
+
+	//vector<int> node_val{ 1,2,2,1 };
+	vector<int> node_val{ 5,1,2 };
+	vector<int> node_val1{ 5,1 };
+
+	Insert_Node(Node, node_val);
+	Insert_Node(Node1, node_val1);
+
+	LinkSol *sol = new LinkSol();
+	//ListNode *res = sol->deleteDuplicates(Node->next);
+	vector<int> res = sol->nextLargerNodes(Node->next);
+}
+
+
+TEST(GetIntersectionNode, 1)
+{
+	ListNode *Node = new ListNode(0);
+	ListNode *Node1 = new ListNode(0);
+
+	//vector<int> node_val{ 1,2,2,1 };
+	vector<int> node_val{ 4,6,2 };
+	vector<int> node_val1{ 5,1 };
+
+	Insert_Node(Node, node_val);
+	Insert_Node(Node1, node_val1);
+
+	LinkSol *sol = new LinkSol();
+	//ListNode *res = sol->deleteDuplicates(Node->next);
+	ListNode *res = sol->getIntersectionNode(Node->next, Node1->next);
+}
+
+
+TEST(RemoveElements, 1)
+{
+	ListNode *Node = new ListNode(0);
+
+	//vector<int> node_val{ 1,2,2,1 };
+	vector<int> node_val{ 2,1 };
+
+	Insert_Node(Node, node_val);
+
+	LinkSol *sol = new LinkSol();
+	//ListNode *res = sol->deleteDuplicates(Node->next);
+	ListNode *res = sol->removeElements(Node->next,1);
+}
+
+
+
+TEST(IsPalindrome, 1)
+{
+	ListNode *Node = new ListNode(0);
+
+	vector<int> node_val{ 1,2,2,1 };
+
+	Insert_Node(Node, node_val);
+
+	LinkSol *sol = new LinkSol();
+	//ListNode *res = sol->deleteDuplicates(Node->next);
+	sol->isPalindrome(Node->next);
+}
+
+
+
+TEST(DeleteDuplicates, 1)
+{
+	ListNode *Node = new ListNode(0);
+
+	vector<int> node_val{ 1,1,2,3,3 };
+
+	Insert_Node(Node, node_val);
+
+	LinkSol *sol = new LinkSol();
+	//sol->reverseList(Node);
+	//ListNode *res = sol->deleteDuplicates(Node->next);
+	ListNode *res1 = sol->deleteDuplicates1(Node->next);
+}
+
+
+//
+//TEST(A_STRING,B)
+//{
+//	statictest_c::func_a(5);
+//	statictest::func_a(15);
+//
+//
+//
+//	string a = "";
+//	auto tmp = a.rbegin();
+//	int b = 0;
+//}
+
+
+TEST(MergeTwoLists,1)
+{
+	ListNode *Node1 = new ListNode(0);
+	ListNode *Node2 = new ListNode(0);
+
+	vector<int> node_val1{ 4,2,1 };
+	vector<int> node_val2{ 4,3,1 };
+
+	Insert_Node(Node1, node_val1);
+	Insert_Node(Node2, node_val2);
+		
+	LinkSol *sol = new LinkSol();
+	//sol->reverseList(Node);
+	ListNode *rst = sol->mergeTwoLists1(Node1->next, Node2->next);
+	ListNode *rst1 = sol->mergeTwoLists(Node1->next, Node2->next);
+}
+
+
+TEST(ReverseList,1)
+{
+	ListNode *Node = new ListNode(0);
+
+	vector<int> node_val{ 8,7,6,5,4,3,2,1 };
+
+	Insert_Node(Node, node_val);
+		
+	LinkSol *sol = new LinkSol();
+	//sol->reverseList(Node);
+	sol->reverseList1(Node);
+
+}
+
+
+TEST(MatrixReshape,1)
+{
+	vector<vector<int>> in;
+	vector<int> vec[2];
+	vec[0] = { 1,2 };
+	vec[1] = { 3,4 };
+	in.push_back(vec[0]);
+	in.push_back(vec[1]);
+
+
+	Solution *sol = new Solution();
+	sol->matrixReshape(in,1,4);
+}
+
+TEST(IsToeplitzMatrix,1)
+{
+	vector<int> vec[5];
+	vec[0] = { 1,2,3,4 };
+	vec[1] = { 5,1,2,3 };
+	vec[2] = { 9,5,1,2 };
+
+	vec[3] = { 1,2 };
+	vec[4] = { 2,2 };
+
+	vector<vector<int>> matrix[3];
+	matrix[0].push_back(vec[0]);
+	matrix[0].push_back(vec[1]);
+	matrix[0].push_back(vec[2]);
+	matrix[1].push_back(vec[3]);
+	matrix[1].push_back(vec[4]);
+
+	vector<int> vec1{ 65, 98, 57 };
+	matrix[2].push_back(vec1);
+	Solution *sol = new Solution();
+	EXPECT_EQ(sol->isToeplitzMatrix(matrix[0]),true);
+	EXPECT_EQ(sol->isToeplitzMatrix(matrix[1]),false);
+	EXPECT_EQ(sol->isToeplitzMatrix(matrix[2]),true);
+	int a = 0;
+	//bool flag = sol->isToeplitzMatrix(matrix[0]);
+}
+
+TEST(NumSmallerByFrequency,1)
+{
+	//vector <string> queries{ "bbb", "cc" }, words{ "a", "aa", "aaa", "aaaa" };
+	vector <string> queries{ "cbd" }, words{ "zaaaz" };
+	Solution *sol = new Solution();
+	sol->numSmallerByFrequency(queries, words);
+}
+
+TEST(CountCharacters,1)
+{
+	vector<string> strin{ "cat","bt","hat","tree" };
+	string charin{ "atach" };
+	Solution *sol = new Solution();
+	int res = sol->countCharacters(strin, charin);
+}
+
+
+TEST(MaxDistToClosest,1)
+{
+	vector<int> in{ 1,0,0,0,1,0,1 };
+	vector<int> in1{ 1,0,0,0 };
+	vector<int> in2{ 1,0,0,1 };
+	vector<int> in3{ 0,0,1 };
+	vector<int> in4{ 1,1,1,0,1,0,1,1,0,0,1 };
+	Solution *sol = new Solution();
+	//int res1 = sol->maxDistToClosest(in);
+	//int res2 = sol->maxDistToClosest(in1);
+	//int res3 = sol->maxDistToClosest(in2);
+	//int res4 = sol->maxDistToClosest(in3);
+	int res5 = sol->maxDistToClosest(in4);
+}
+
+TEST(Plus_One,Normal)
+{
+	vector<int> in{ 1,2,3,9 };
+	vector<int> in1{ 0 };
+	Solution *sol = new Solution();
+	vector<int> res = sol->plusOne(in1);
+}
+
+
+TEST(Find_Pivot_Index,Normal)
+{
+	vector<int> in{ 1, 7, 3, 6, 5, 6 };
+	vector<int> in1{ -1,-1,-1,-1,-1,0 };
+	vector<int> in2{ -1,-1,-1,-1,-1,-1 };
+	vector<int> in3{ -1,-1,-1,-1,0,1 };
+	Solution *sol = new Solution();
+	sol->pivotIndex(in3);
+}
+
+
+TEST(AddToArrayForm,Normal)
+{
+	vector<int> A{ 1,2,0,0 };
+	Solution *sol = new Solution();
+	vector<int> res = sol->addToArrayFormleet(A,34);
+}
+
+TEST(Maximum_Subarray,Normal)
+{
+	vector<int> in{ -2, 1, -3, 4, -1, 2, 1, -5, 4 };
+	vector<int> in1{ -2, 1 };
+	vector<int> in2{ 1 , 2 };
+	Solution *sol = new Solution();
+	//int rst = sol->maxSubArray(in2);
+	int rst = sol->maxSubArrayleetcode(in);
+}
+
+TEST(Occurrences_After_Bigram,Normal)
+{
+	string text = "alice is a good girl she is a good student";
+	string first = "a";
+	string second = "good";
+
+	Solution *sol = new Solution();
+	vector<string> rst = sol->findOcurrences(text, first,second);
+}
+
 
 ListNode* GenerateList(const std::vector<int> ll)
 {

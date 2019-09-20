@@ -5,6 +5,54 @@
 #include <iterator>
 using namespace std;
 
+#define PI          3.1415926535897932  /* 圆周率 pi */
+#define D2R         (PI/180.0)          /* 度转弧度 deg to rad */
+#define R2D         (180.0/PI)          /* 弧度转度 rad to deg */
+
+
+double dot(const double *a, const double *b, int n)
+{
+	double c = 0.0;
+
+	while (--n >= 0) 
+		c += a[n] * b[n];
+	return c;
+}
+
+void xyz2blh(const double *r, double *pos)
+{
+	double FE_WGS84 = (1.0 / 298.257223563);
+	double RE_WGS84 = 6378137.0;
+	double e2 = FE_WGS84 * (2.0 - FE_WGS84);
+	double r2 = dot(r, r, 2), z, zk, v = RE_WGS84, sinp;
+
+	for (z = r[2], zk = 0.0; fabs(z - zk) >= 1E-4;) {
+		zk = z;
+		sinp = z / sqrt(r2 + z * z);
+		v = RE_WGS84 / sqrt(1.0 - e2 * sinp*sinp);
+		z = r[2] + v * e2*sinp;
+	}
+
+	//计算BLH，其中pos[0]为纬度B，pos[1]为精度L，pos[2]为H。
+	pos[0] = r2 > 1E-12 ? atan(z / sqrt(r2)) : (r[2] > 0.0 ? PI / 2.0 : -PI / 2.0);
+	pos[1] = r2 > 1E-12 ? atan2(r[1], r[0]) : 0.0;
+	pos[2] = sqrt(r2 + z * z) - v;
+
+	//弧度专成度
+	pos[0] = pos[0] * R2D;
+	pos[1] = pos[1] * R2D;
+}
+
+
+TEST()
+{
+	double in[3] = { -2160908.9091,4384024.5909,4084144.5367 };
+	double out[3];
+
+	xyz2blh(in,out);
+
+}
+
 ListNode* GetLast_K(ListNode *list,const int k)
 {
 	int n = 0;
@@ -62,6 +110,12 @@ int get_top_pos(std::vector<int>& list_input, const int k)
 int Static_Member<int>::mem_ = 1;
 int Static_Member<char>::mem_ = 2;
 
+
+TEST(Fraction_TEST,NORMAL)
+{
+	Fraction f(3,5);
+	double d = 4 + f;
+}
 
 TEST(SETBITS_TEST,NORMAL)
 {

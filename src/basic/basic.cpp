@@ -1,6 +1,12 @@
 #include "basic.h"
 #include <fstream>
 
+bool increment(char *number)
+{
+	bool isvaild = false;
+	return isvaild;
+}
+
 ListNode* ReverseListNode(ListNode* phead, const int k)
 {
 	int cnt = 0;
@@ -14,7 +20,6 @@ ListNode* ReverseListNode(ListNode* phead, const int k)
 	}
 	return ret;
 }
-
 
 int ListLenght(const ListNode* l)
 {
@@ -60,6 +65,9 @@ void StackWithMin<T>::pop()
 		min_stack.pop();
 	}
 }
+
+
+
 
 template<typename T>
 const T& StackWithMin<T>::min()

@@ -1,6 +1,7 @@
 #include "CSerialPort.h"
 #include <iostream>
 #include <process.h>
+#include <fstream>
 
 /** 线程退出标志 */
 bool CSerialPort::s_bExit = false;
@@ -118,6 +119,7 @@ bool CSerialPort::InitPort(UINT portNo, const LPDCB& plDCB)
 	LeaveCriticalSection(&m_csCommunicationSync);
 	return true;
 }
+
 void CSerialPort::ClosePort()
 {
 	/** 如果有串口被打开，关闭它 */
@@ -206,7 +208,6 @@ bool CSerialPort::CloseListenTread()
 	return true;
 }
 
-
 UINT CSerialPort::GetBytesInCOM()
 {
 	DWORD dwError = 0;  /** 错误码 */
@@ -236,7 +237,7 @@ UINT WINAPI CSerialPort::ListenThread(void* pParam)
 			continue;
 		}
 		/** 读取输入缓冲区中的数据并输出显示 */
-		char cRecved = 0x00;
+		//char cRecved = 0x00;
 		//do
 		//{
 			//cRecved = 0x00;
@@ -278,6 +279,7 @@ bool CSerialPort::ReadChar(char &cRecved)
 	LeaveCriticalSection(&m_csCommunicationSync);
 	return (BytesRead == 1);
 }
+
 bool CSerialPort::ReadData()
 {
 	BOOL  bResult = TRUE;
@@ -293,7 +295,11 @@ bool CSerialPort::ReadData()
 	char* buf = new char[bufLen];
 	memset(buf, 0, bufLen);
 	bResult = ReadFile(m_hComm, buf, bufLen, &BytesRead, NULL);
-	printf("%s\n", buf);
+
+	std::ofstream ostrm("D:\\learn\\cpplearn\\test_data\\serial.raw", std::ios::binary | std::ios::app);
+	ostrm.write(reinterpret_cast<char*>(buf), bufLen); // 二进制输出
+
+	//printf("%s\n", buf);
 	delete[] buf;
 	
 	if ((!bResult))
