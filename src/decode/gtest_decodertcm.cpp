@@ -163,6 +163,7 @@ TEST(GET_DATA, NORMAL)
 			rst = decode_type1046(item.buf, item.len, &eph);
 			break;
 		case 1013:
+			rst = -1;
 			//rst = decode_type1013(item.buf, item.len, &eph);
 			break;
 		case 1042:
@@ -184,7 +185,7 @@ TEST(GET_DATA, NORMAL)
 			rst = decode_msm7(item.buf, item.len, SYS_GAL, &obs);
 			break;
 		case 4075:
-			;
+			rst = -1;
 			break;
 		default:
 			rst = -1;
