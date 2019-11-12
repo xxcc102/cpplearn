@@ -47,6 +47,13 @@ struct ListNode
 	ListNode * m_pNext;
 };
 
+
+class list_exam {
+public:
+
+};
+
+
 struct BinaryTreeNode
 {
 	int	m_nValue;
@@ -116,3 +123,5 @@ public:
 
 
 int writebinary(unsigned char *buf, const int& len);
+
+

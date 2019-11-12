@@ -6,6 +6,25 @@
 void print(){}
 
 
+class CallBack_
+{
+public:
+	CallBack_() {}
+	void A() { cout << "A()" << endl; };
+};
+
+
+class Base
+{
+public:
+	Base() {}
+	friend class CallBack_;
+protected:
+	void B(CallBack_ &rec) {
+		rec.A();
+	}
+};
+
 
 //enum status_
 //{
@@ -71,6 +90,11 @@ void print(){}
 //	convert_tec(in);
 //
 //}
+TEST(Friend, normal_)
+{
+	Base b;
+	
+}
 
 TEST(Boost_TEST, 1)
 {

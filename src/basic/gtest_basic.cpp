@@ -9,6 +9,32 @@ using namespace std;
 #define D2R         (PI/180.0)          /* 度转弧度 deg to rad */
 #define R2D         (180.0/PI)          /* 弧度转度 rad to deg */
 
+void del(int a[], int n)
+{
+	int i = 0, j = 0;
+	while (i<n-1)
+	{
+		if (a[i] != a[i + 1])
+			i++;
+		else
+		{
+			for (j = i + 1; j < n; j++)
+			{
+				a[j - 1] = a[j];
+			}
+			n--;
+		}
+	}
+}
+
+TEST(TESTA,456)
+{
+	int in[10] = {1,2,3,3,3,4,4,4,6,8};
+	int len = 10;
+	del(in, len);
+	cout << in;
+}
+
 
 double dot(const double *a, const double *b, int n)
 {
