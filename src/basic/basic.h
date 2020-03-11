@@ -1,9 +1,19 @@
 #pragma once
 #include "common.h"
 
+int findchangeposword(char *fname, char *word);
+
+int get_weekday(int year, int month, int day);
+
+int strcmp_nc(char *s1, char*s2);
 
 bool increment(char *number);
 
+int findbigword(char *src, char *res);
+
+int SearchDelChar(char *src, char*findchar);
+
+int STRCOUNT(char*str, char*substr);
 
 class Base
 {

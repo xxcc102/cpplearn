@@ -8,7 +8,7 @@ SET( CPP11_TEST_CPP
 #头文件设置
 SET( CPP11_TEST_H 
 D:/boost_1_71_0
-${PROJECT_SOURCE_DIR}/include	)
+${PROJECT_SOURCE_DIR}/include)
 
 #公共库文件
 SET(COMMON_CPP ${PROJECT_SOURCE_DIR}/src/common)
@@ -25,7 +25,21 @@ FOREACH(file IN LISTS COMMON_FILE)
 	MESSAGE(STATUS ${file})
 ENDFOREACH(file)
 
-include_directories(${CPP11_TEST_H})
+SET(BOOST_LIB D:/boost_1_71_0/stage/lib)
 
+include_directories(${CPP11_TEST_H})
+LINK_DIRECTORIES(${BOOST_LIB})
+
+FILE(GLOB_RECURSE BOOST_LIBS LIST_DIRECTORIES false ${BOOST_LIB}/*.dll)
+MESSAGE(STATUS "BOOST_LIBS:")
+FOREACH(file IN LISTS BOOST_LIBS)
+	MESSAGE(STATUS ${file})
+ENDFOREACH(file)
+
+#FIND_LIBRARY(BOOST_LIBS D:/boost_1_71_0/stage/lib NO_DEFAULT_PATH)
+
+LINK_LIBRARIES(${BOOST_LIBS})
 add_executable(cpp11_program ${CPP11_FILE} ${COMMON_FILE})
-target_link_libraries(cpp11_program	gtest_main gtest)
+target_link_libraries(cpp11_program gtest_main gtest)
+target_link_libraries(cpp11_program	boost_chrono-vc141-mt-gd-x32-1_71.dll)
+#${BOOST_LIBS}

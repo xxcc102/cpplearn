@@ -1,5 +1,4 @@
 #include "decode.h"
-//gtime_t dc_time = { 0 };
 
 
 int glonass_freq_num[NSATGLO] = { //glonassÆµµÀºÅ
@@ -91,14 +90,17 @@ void adjday_glot(gtime_t *time, double tod)
 	if (time->time == 0) 
 		*time = utc2gpst(timeget());
 	
-timein = timeadd(gpst2utc(*time), 10800.0); /* glonass time */
+	timein = timeadd(gpst2utc(*time), 10800.0);/* glonass time */
 
 	tow = time2gpst(timein, &week);
-	tod_p = fmod(tow, 86400.0); tow -= tod_p;
+	tod_p = fmod(tow, 86400.0);
+	tow -= tod_p;
+
 	if (tod < tod_p - 43200.0) 
 		tod += 86400.0;
 	else if (tod > tod_p + 43200.0) 
 		tod -= 86400.0;
+
 	timein = gpst2time(week, tow + tod);
 	*time = utc2gpst(timeadd(timein, -10800.0));
 }
@@ -358,11 +360,6 @@ static void save_msm_obs(const unsigned char *buff, int sys, msm_h_t *h, MsmData
 
 
 
-
-
-
-
-
 ///1046
 /* decode type 1046: galileo I/NAV satellite ephemerides (ref [17]) ----------*/
 int decode_type1046(const unsigned char *buff,const int len,nav_t *nav)
@@ -619,14 +616,15 @@ int decode_type1042(const unsigned char *buff, const int len, nav_t *nav)
 
 
 /* decode msm 4: full pseudorange and phaserange plus cnr --------------------*/
-int decode_msm4(const unsigned char *buff, int len, int type, int sys, obs_t *obs)
+int decode_msm4(const unsigned char *buff, int len, int sys, obs_t *obs, gtime_t time)
 {
 	msm_h_t h = { 0 };
 	MsmData md = { 0 };
 	//double r[64], pr[64], cp[64], cnr[64];
-	int i, j, sync, iod, ncell, rng, rng_m, prv, cpv/*, lock[64], half[64]*/;
+	int i, j, sync, iod, ncell, rng, rng_m, prv, cpv,type/*, lock[64], half[64]*/;
+	md.time = time;
 
-	//type = getbitu(buff, 24, 12);
+	type = getbitu(buff, 24, 12);
 
 	/* decode msm header */
 	if ((ncell = decode_msm_head(buff, len, sys, &sync, &iod, &h, &i,&md)) < 0) return -1;
@@ -676,10 +674,11 @@ int decode_msm4(const unsigned char *buff, int len, int type, int sys, obs_t *ob
 
 
 /* decode msm 7: full pseudorange, phaserange, phaserangerate and cnr (h-res) */
-int decode_msm7(const unsigned char *buff, int len, int sys, obs_t *obs)
+int decode_msm7(const unsigned char *buff, int len, int sys, obs_t *obs, gtime_t time)
 {
 	msm_h_t h = { 0 };
 	MsmData md = { 0 };
+	md.time = time;
 	int i, type, j, sync, iod, ncell, rng, rng_m, rate, prv, cpv, rrv;
 
 	type = getbitu(buff, 24, 12);

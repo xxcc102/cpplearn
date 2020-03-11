@@ -18,6 +18,16 @@
 //		for (int i = 0; i < line.length(); i++)
 //			;
 //}
+
+int Solution::lengthOfLongestSubstring(string s)
+{
+
+
+
+
+	return 0;
+}
+
 int BinarySearchSol::search(vector<int>& nums, int target)
 {
 	int cur = 0,len = nums.size(),cnt = 0;

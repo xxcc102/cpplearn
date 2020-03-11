@@ -1,0 +1,4 @@
+//int randomselect()
+//{
+//	srand(timeget());
+//}

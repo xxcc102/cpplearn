@@ -3,6 +3,8 @@
 #include <memory>
 #include <list>
 #include <iterator>
+#include <iomanip>
+
 using namespace std;
 
 #define PI          3.1415926535897932  /* ‘≤÷‹¬  pi */
@@ -26,6 +28,169 @@ void del(int a[], int n)
 		}
 	}
 }
+
+void string2int(int n)
+{
+	int i = 0;
+	i = n / 10;
+	if (i !=0 )
+	{
+		string2int(i);
+	}
+	putchar(n%10+'0');
+}
+
+
+int delchar(char *p,char* search)
+{
+	int pos = 0;
+	bool flag = false;
+	while (*p!='\0')
+	{
+		if (p[pos] == *search)
+		{
+			flag = true;
+			break;
+		}
+		else
+			pos++;
+	}
+	if (flag)
+	{
+		return pos;
+	}
+	return 0;
+}
+
+int ReadFile(int row,char *filename)
+{
+	return 0;
+}
+
+
+void PropreData()
+{
+
+}
+
+TEST(TestNodeList,Normal)
+{
+
+
+	Matrix_Add();
+
+
+}
+
+
+
+TEST(YEAR2019,OUTPUTSTRING)
+{
+	double number = 2.049999;
+	setprecision(3);
+
+
+	char filenamepath[] = "D:/learn/cpplearn/test_data/year2019.txt";
+	int a = findchangeposword(filenamepath,"xc");
+
+}
+
+
+TEST(YEAR2019, WEEKDAY)
+{
+
+	//printf("%d",-20);
+
+	int weekday = get_weekday(1, 2, 5);
+	EXPECT_EQ(weekday, 4);
+}
+
+
+TEST(YEAR2016,STRCMP)
+{
+	char *s1 = "hello world";
+	char *s2 = "heLLo world";
+	int res = strcmp_nc(s1, s2);
+
+}
+
+TEST(Year2015, findbigchar)
+{
+	char p[] = "hello world ,I love this world";
+	char res;
+	int num = findbigword(p, &res);
+}
+
+
+TEST(Year2015,finddelchar)
+{
+	char p[] = "hello world ,I love this world";
+	char q = 'w';
+	int res = SearchDelChar(p, &q);
+	EXPECT_STREQ(p, "hello orld ,I love this world");
+}
+
+TEST(year2014,strcnt)
+{
+	int cnt = STRCOUNT("hello world ,I love this world", "world");
+	EXPECT_EQ(cnt, 2);
+}
+
+
+TEST(Year2010,LastProblem)
+{
+	
+}
+
+TEST(DelCharInString,Normal)
+{
+	//cout<<sumadd(5,4)<<endl;
+	int k;
+
+}
+
+
+
+TEST(INT2STRING,Normal)
+{
+	char *p, *q;
+	p = (char*)malloc(sizeof(char)*20);
+
+	q = p;
+	scanf("%s%s",p,q);
+	
+	
+	
+	char *u = "china";
+	//char *r;
+	//r = "china";
+
+
+	//string china[10] = { "china" };
+	//
+
+	//int b, a, k;
+	//for (b = 0 ,a = 1;a>++b;a = k++)
+	//{
+	//	k = a;
+	//}
+
+
+	//int x = 6;
+	//x -= x * x;
+	//x += x;
+
+
+	//char ch[81], *p = ch, *q;
+
+
+
+
+
+	
+	string2int(583);
+}
+
 
 TEST(TESTA,456)
 {

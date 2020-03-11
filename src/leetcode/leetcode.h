@@ -346,6 +346,8 @@ public:
 
 class Solution {
 public:
+	int lengthOfLongestSubstring(string s);
+
 	vector<double> averageOfLevels(TreeNode* root);
 	int heightChecker(vector<int>& heights);
 	vector<vector<int>> allCellsDistOrder(int R, int C, int r0, int c0);

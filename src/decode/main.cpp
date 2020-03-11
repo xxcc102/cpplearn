@@ -135,7 +135,8 @@ void initobs(obs_t *obs)
 }
 
 
-TEST(GET_DATA, NORMAL)
+
+void main()
 {
 	string fname = "D:\\learn\\cpplearn\\test_data\\RxRec20191025.dat";
 	vector<PackageBuf> packdata;
@@ -166,13 +167,13 @@ TEST(GET_DATA, NORMAL)
 			//rst = decode_type1013(item.buf, item.len, &eph);
 			break;
 		case 1042:
-			rst = decode_type1042(item.buf, item.len, &eph);
+			rst = decode_type1046(item.buf, item.len, &eph);
 			break;
 		case 1019:
 			rst = decode_type1019(item.buf, item.len, &eph);
 			break;
 		case 1077:
-			rst = decode_msm7(item.buf, item.len, SYS_GPS, &obs, eph.eph->week);
+			rst = decode_msm7(item.buf, item.len, SYS_GPS, &obs);
 			break;
 		case 1117:
 			rst = decode_msm7(item.buf, item.len, SYS_QZS, &obs);
@@ -213,4 +214,6 @@ TEST(GET_DATA, NORMAL)
 	{
 		cout << "sat[" << i << ":]" << eph.eph[i].sat << endl; //don't include glonass
 	}
+
+
 }

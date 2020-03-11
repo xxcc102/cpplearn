@@ -114,5 +114,27 @@ int decode_type1042(const unsigned char *buff, const int len, nav_t *nav);
 
 int initnav(nav_t *nav);
 
-int decode_msm7(const unsigned char *buff, int len, int sys, obs_t *obs);
+int decode_msm7(const unsigned char *buff, int len, int sys, obs_t *obs, gtime_t time);
 
+int decode_msm4(const unsigned char *buff, int len, int sys, obs_t *obs, gtime_t time);
+
+
+void Ql_GNSS_NMEA_Callback(unsigned char *NMEA_Buff, unsigned int NMEA_Length)
+{
+	uint8_t i = 0;
+	unsigned char buff[2][2048];
+
+	for (i = 0; i < NMEA_Length; ++i)
+	{
+		if ((unsigned char)NMEA_Buff[i] != kRtcm32Preamble)
+		{
+			continue;
+		}
+
+
+		
+		
+		/* TODO:对收到的流动站rtcm进行处理，NMEA_Buff[i] */
+	}
+
+}
